@@ -1,0 +1,65 @@
+# Файлы ОС и редакторов
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Окружение и локальные секреты
+.env
+.env.*
+!.env.example
+
+# Байткод и кэши Python
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+
+# Виртуальные окружения
+.venv/
+venv/
+env/
+ENV/
+
+# Артефакты сборки и упаковки
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Линтеры, проверка типов и отчеты тестов
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Runtime-артефакты Django
+db.sqlite3
+db.sqlite3-*
+*.sqlite3
+staticfiles/
+media/
+tmp/
+logs/
+*.log
+
+# Локальные Docker-переопределения
+docker-compose.override.yml
+
+# Черновики документации и сгенерированные отчеты
+docs/
+reports/
+artifacts/
+*.pdf
+*.doc
+*.docx
+*.odt
+*.ppt
+*.pptx
+*.xls
+*.xlsx

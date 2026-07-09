@@ -1,0 +1,204 @@
+[project]
+name = "django-cash-flow-manager"
+version = "0.1.0"
+description = "Django web service for managing cash flow records and dictionaries."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "django>=6.0.7",
+    "djangorestframework>=3.17.1",
+    "gunicorn>=23.0.0",
+    "psycopg[binary]>=3.2.0",
+]
+
+[dependency-groups]
+dev = [
+    "coverage[toml]>=7.10.0",
+    "django-stubs>=5.2.0",
+    "mypy>=1.19.0",
+    "pytest>=8.4.0",
+    "pytest-cov>=7.0.0",
+    "pytest-django>=4.11.0",
+    "pytest-mock>=3.15.0",
+    "ruff>=0.12.0",
+    "testcontainers[postgres]>=4.13.0",
+]
+
+[tool.mypy]
+python_version = "3.14"
+plugins = [
+    "mypy_django_plugin.main",
+]
+explicit_package_bases = true
+exclude = "^(tests|tests_functional|venv|.venv)/"
+check_untyped_defs = true
+disallow_any_explicit = false
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_any_generics = true
+ignore_errors = false
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+
+[tool.django-stubs]
+django_settings_module = "django_cash_flow_manager.settings"
+
+[tool.ruff]
+line-length = 120
+src = [
+    ".",
+]
+exclude = [
+    "pyproject.toml",
+    ".venv",
+    "venv",
+    "migrations",
+]
+target-version = "py314"
+
+[tool.ruff.lint]
+select = [
+    "F", # правила Pyflakes
+    "E", # ошибки Pycodestyle
+    "W", # предупреждения Pycodestyle
+    "I", # сортировка импортов
+    "N", # именование по pep8-naming
+    "UP", # обновления синтаксиса pyupgrade
+    "YTT", # проверки flake8-2020
+    "ANN", # аннотации flake8-annotations
+    "B", # проверки flake8-bugbear
+    "C4", # проверки flake8-comprehensions
+    "DTZ", # проверки flake8-datetimez
+    "T10", # запрет отладчика flake8-debugger
+    "ISC", # неявная конкатенация строк
+    "ICN", # соглашения импортов
+    "LOG", # проверки логирования
+    "G", # форматирование логирования
+    "PIE", # проверки flake8-pie
+    "T20", # запрет print
+    "PT", # стиль pytest
+    "PYI", # проверки stub-файлов
+    "Q", # кавычки
+    "RSE", # проверки raise
+    "RET", # проверки return
+    "SIM", # упрощение кода
+    "TID", # аккуратность импортов
+    "PTH", # использование pathlib
+    "TD", # проверки TODO
+    "PGH", # проверки pygrep-hooks
+    "PL", # правила Pylint
+    "TRY", # проверки tryceratops
+    "RUF", # собственные правила Ruff
+]
+ignore = [
+    "UP040", # запрет не-pep695 type alias
+    "ANN401", # разрешить Any
+    "B005", # разрешить strip с несколькими символами
+    "B905", # разрешить zip без strict
+    "N818", # не требовать суффикс Error для исключений
+    "ISC001", # разрешить однострочную неявную конкатенацию строк
+    "PT011", # разрешить широкие pytest.raises
+    "PT019", # разрешить фикстуру без значения
+    "PT030", # разрешить широкие pytest.warns
+    "Q003", # разрешить избегаемое экранирование кавычек
+    "SIM108", # разрешить if-else вместо тернарного выражения
+    "SIM212", # разрешить обратный порядок тернарного выражения
+    "PTH123", # разрешить встроенный open
+    "TD002", # не требовать автора TODO
+    "PLR0911", # разрешить много return
+    "PLR0912", # разрешить много ветвлений
+    "PLR0913", # разрешить много аргументов
+    "PLR0915", # разрешить много операторов
+    "PLR2004", # разрешить сравнение с магическими значениями
+    "PLW1641", # разрешить __eq__ без __hash__
+    "PLW2901", # разрешить переопределение имени цикла
+    "SIM300", # разрешить yoda-conditions
+    "PGH004", # разрешить общий noqa
+    "TRY002", # разрешить выброс обычного класса
+    "TRY003", # разрешить обычные аргументы исключения
+    "RUF001", # разрешить неоднозначные unicode-символы в строках
+    "RUF002", # разрешить неоднозначные unicode-символы в строках документации
+    "RUF003", # разрешить неоднозначные unicode-символы в комментариях
+    "RUF005", # разрешить конкатенацию collection literal
+    "RUF006", # разрешить несохраненные asyncio-задачи
+    "RUF012", # разрешить изменяемые class defaults
+    "RET504", # разрешить лишнее присваивание перед return
+]
+extend-safe-fixes = [
+    "ANN", # аннотации flake8-annotations
+    "ICN", # соглашения импортов
+    "PT", # стиль pytest
+    "TID252", # относительные импорты
+    "RUF032", # Decimal из float-литерала
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = [
+    "F401", # неиспользуемый импорт
+]
+"tests*/**/*.py" = [
+    "N", # именование pep8-naming
+    "UP026", # устаревший импорт mock
+    "ANN", # аннотации flake8-annotations
+]
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "single"
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+lines-after-imports = 2
+no-lines-before = [
+    "local-folder",
+]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "django_cash_flow_manager.settings"
+python_files = [
+    "test_*.py",
+    "*_tests.py",
+    "tests.py",
+]
+testpaths = [
+    "tests",
+    "tests_functional",
+]
+addopts = [
+    "-q",
+    "--strict-markers",
+    "--cov=django_cash_flow_manager",
+    "--cov-report=term-missing",
+]
+markers = [
+    "functional: end-to-end behavior tests through Django views or public interfaces",
+    "unit: isolated unit tests for models, forms, validators, and helpers",
+]
+
+[tool.coverage.run]
+source = [
+    "django_cash_flow_manager",
+]
+omit = [
+    "django_cash_flow_manager/asgi.py",
+    "django_cash_flow_manager/wsgi.py",
+    "*/migrations/*",
+    "manage.py",
+    "tests/*",
+    "tests_functional/*",
+]
+
+[tool.coverage.report]
+omit = [
+    "django_cash_flow_manager/asgi.py",
+    "django_cash_flow_manager/wsgi.py",
+    "tests/*",
+    "tests_functional/*",
+]
+show_missing = true
+skip_covered = true
+fail_under = 90

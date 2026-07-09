@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Записи ДДС{% endblock %}
+
+{% block content %}
+  <div class="d-flex flex-column flex-lg-row gap-3 justify-content-between align-items-lg-center mb-3">
+    <div>
+      <h1 class="h3 mb-1">Записи ДДС</h1>
+      <p class="text-body-secondary mb-0">Учет поступлений и списаний с фильтрацией по справочникам.</p>
+    </div>
+    <a class="btn btn-primary" href="{% url 'cashflows:transaction-create' %}">Создать запись</a>
+  </div>
+
+  <form class="filters-grid border rounded-2 p-3 mb-3 bg-body-tertiary" method="get">
+    <input type="hidden" name="page_size" value="{{ page_size }}">
+    <div>
+      <label class="form-label" for="date_from">Дата от</label>
+      <input class="form-control" id="date_from" type="date" name="date_from" value="{{ filters.date_from }}">
+    </div>
+    <div>
+      <label class="form-label" for="date_to">Дата до</label>
+      <input class="form-control" id="date_to" type="date" name="date_to" value="{{ filters.date_to }}">
+    </div>
+    <div>
+      <label class="form-label" for="status">Статус</label>
+      <select class="form-select" id="status" name="status">
+        <option value="">Все</option>
+        {% for status in statuses %}
+          <option value="{{ status.pk }}" {% if filters.status == status.pk|stringformat:"s" %}selected{% endif %}>{{ status.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label class="form-label" for="type">Тип</label>
+      <select class="form-select" id="type" name="type">
+        <option value="">Все</option>
+        {% for type in types %}
+          <option value="{{ type.pk }}" {% if filters.type == type.pk|stringformat:"s" %}selected{% endif %}>{{ type.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label class="form-label" for="category">Категория</label>
+      <select class="form-select" id="category" name="category">
+        <option value="">Все</option>
+        {% for category in categories %}
+          <option value="{{ category.pk }}" {% if filters.category == category.pk|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label class="form-label" for="subcategory">Подкатегория</label>
+      <select class="form-select" id="subcategory" name="subcategory">
+        <option value="">Все</option>
+        {% for subcategory in subcategories %}
+          <option value="{{ subcategory.pk }}" {% if filters.subcategory == subcategory.pk|stringformat:"s" %}selected{% endif %}>{{ subcategory.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button class="btn btn-outline-primary" type="submit">Применить</button>
+      <a class="btn btn-outline-secondary" href="{% url 'cashflows:transaction-list' %}">Сбросить</a>
+    </div>
+  </form>
+
+  <div class="transaction-table-shell border rounded-2">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Дата</th>
+            <th>Статус</th>
+            <th>Тип</th>
+            <th>Категория</th>
+            <th>Подкатегория</th>
+            <th class="text-end">Сумма</th>
+            <th>Комментарий</th>
+            <th class="text-end">Действия</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for transaction in transactions %}
+            <tr>
+              <td>{{ transaction.date|date:"d.m.Y" }}</td>
+              <td>{{ transaction.status|default:"-" }}</td>
+              <td>{{ transaction.type }}</td>
+              <td>{{ transaction.category.name }}</td>
+              <td>{{ transaction.subcategory.name }}</td>
+              <td class="text-end text-nowrap">{{ transaction.amount }} р.</td>
+              <td class="comment-cell">{{ transaction.comment|default:"-" }}</td>
+              <td class="text-end text-nowrap">
+                <a class="btn btn-sm btn-outline-secondary icon-btn" href="{% url 'cashflows:transaction-update' transaction.pk %}" aria-label="Редактировать запись" title="Редактировать">
+                  <i class="bi bi-pencil" aria-hidden="true"></i>
+                </a>
+                <a class="btn btn-sm btn-outline-danger icon-btn" href="{% url 'cashflows:transaction-delete' transaction.pk %}" aria-label="Удалить запись" title="Удалить">
+                  <i class="bi bi-trash" aria-hidden="true"></i>
+                </a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="8" class="text-center text-body-secondary py-4">Записей пока нет</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="transaction-pagination-bar">
+      <nav aria-label="Размер страницы">
+        <ul class="pagination pagination-sm transaction-page-size page-size-list mb-0">
+          {% for option in page_size_options %}
+            <li class="page-item {% if option == page_size %}active{% endif %}">
+              <a class="page-link page-size-link" href="{% querystring page=None page_size=option %}">{{ option }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+      <div class="transaction-pagination-summary text-body-secondary">
+        Показано {{ page_obj.start_index }}–{{ page_obj.end_index }} из {{ page_obj.paginator.count }}
+      </div>
+      {% if page_obj.paginator.num_pages > 1 %}
+        <nav class="transaction-page-nav" aria-label="Пагинация записей">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+              {% if page_obj.has_previous %}
+                <a class="page-link" href="{% querystring page=page_obj.previous_page_number page_size=page_size %}" aria-label="Предыдущая страница">«</a>
+              {% else %}
+                <span class="page-link" aria-hidden="true">«</span>
+              {% endif %}
+            </li>
+            {% for page_number in page_obj.paginator.page_range %}
+              <li class="page-item {% if page_number == page_obj.number %}active{% endif %}">
+                <a class="page-link" href="{% querystring page=page_number page_size=page_size %}" aria-label="Страница {{ page_number }}">{{ page_number }}</a>
+              </li>
+            {% endfor %}
+            <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+              {% if page_obj.has_next %}
+                <a class="page-link" href="{% querystring page=page_obj.next_page_number page_size=page_size %}" aria-label="Следующая страница">»</a>
+              {% else %}
+                <span class="page-link" aria-hidden="true">»</span>
+              {% endif %}
+            </li>
+          </ul>
+        </nav>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-7 col-xl-5">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">{{ title }}</h1>
+        <a class="btn btn-outline-secondary" href="{% url 'cashflows:catalogs' %}">Назад</a>
+      </div>
+      <form class="border rounded-2 p-3 bg-body" method="post">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|join:", " }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <div class="d-flex gap-2">
+          <button class="btn btn-primary" type="submit">Сохранить</button>
+          <a class="btn btn-outline-secondary" href="{% url 'cashflows:catalogs' %}">Отмена</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
